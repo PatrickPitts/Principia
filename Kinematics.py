@@ -1,6 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from Mathematics import cartesian2d_to_polar2d, polar2d_to_cartesian2d
+from Mathematics import cartesian2d_to_polar2d, polar2d_to_cartesian2d, rad_to_deg
 
 
 class ProjectileMotion2d:
@@ -20,9 +19,27 @@ class ProjectileMotion2d:
             raise ValueError("Projectile Motion: Bad Parameters: cannot infer mechanics from provided parameters")
 
     def __str__(self):
-        return "r(0) = ({x0}, {y0})\nv = {v}, theta = {theta}\n" \
-               "vx = {vx}, vy = {vy}\ng = {g}".format(x0=self.x0, y0=self.y0, v=self.v, theta=self.theta, vx=self.vx,
-                                                      vy=self.vy, g=self.g)
+        s = "Initial Conditions:\n"
+        s += "Launch Speed: {v} m/s\n"
+        s += "Launch Angle: {theta} degrees\n"
+        s += "Vertical Launch Speed: {vx} m/s\n"
+        s += "Horizontal Launch Speed: {vy} m/s\n"
+        s += "-" * 20 + "\n"
+        s += "Results:\n"
+        s += "Range: {rng} m\n"
+        s += "Maximum Height: {max_height} m\n"
+        s += "Hang Time: {t} s\n"
+
+        rng, t = self.range()
+        x, max_height = self.max_height()
+
+        return s.format(v=round(self.v, 3),
+                        rng=round(rng, 3),
+                        t=round(t, 3),
+                        max_height=round(max_height, 3),
+                        theta=round(rad_to_deg(self.theta), 3),
+                        vx=round(self.vx, 3),
+                        vy=round(self.vy, 3), g=round(self.g, 3))
 
     def range(self):
         t = (-self.vy - np.sqrt(self.vy ** 2 - 2 * self.g * self.y0)) / self.g
@@ -34,8 +51,9 @@ class ProjectileMotion2d:
                                       np.arctan((self.vy + self.g * t) / self.vx)))
         return pos(np.linspace(t0, tf, n_steps, endpoint=True))
 
+    # (x, y)
     def max_height(self):
-        return -self.vy ** 2 / (2 * self.g)
+        return -self.vy * self.vx / self.g, -self.vy ** 2 / (2 * self.g)
 
 
 def projectile_max_height(x0=0, y0=0, vx=None, vy=None, theta=None, v=None, g=-9.81):
@@ -75,9 +93,3 @@ def projectile_motion_2d_vectorized(x0=0, y0=0, vx=None, vy=None, theta=None, v=
         print("Bad parameters")
 
     return pos(np.arange(t1, t2, (t2 - t1) / n_steps))
-
-# t_range = 5 * np.sqrt(2) / (9.81 / 2)
-#
-# x, y = projectile_motion_2d_vectorized(v=10, theta=np.pi / 4, t2=t_range, n_steps=101)
-# plt.plot(x, y, color='red')
-# plt.show()
