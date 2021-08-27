@@ -1,3 +1,4 @@
+import tkinter
 import math
 from math import sin, cos, pi
 from numpy import arange, array, vectorize
@@ -92,7 +93,7 @@ def anim(t1, t2):
     a = FuncAnimation(fig, animate, init_func=init, frames=len(steps),
                                 interval=int(1000 / frame_rate), blit=True, repeat=False)
 
-    # a.save("double_pendulum_85_85.gif", writer=PillowWriter(fps=15))
+#     a.save("double_pendulum_84_84.gif", writer=PillowWriter(fps=15))
     plt.show()
 
 
